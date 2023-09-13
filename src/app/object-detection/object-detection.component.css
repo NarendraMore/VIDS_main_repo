@@ -1,0 +1,21 @@
+.fireContainer4 {
+    height: 100%;
+    padding-bottom: 3%;
+    padding-top: 1%;
+    padding-left: 3%;
+}
+
+.fireImgClass4 {
+    height: 300px;
+    width: 100%;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.9);
+    border-radius: 2%;
+    /* border: 1px solid red; */
+}
+
+.card4 {
+    /* border: 1px solid; */
+    /* margin-left: -8%; */
+    padding-top: 2%;
+    /* border: 1px solid red; */
+}
