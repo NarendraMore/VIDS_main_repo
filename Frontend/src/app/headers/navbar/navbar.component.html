@@ -1,0 +1,112 @@
+
+<div class="container">
+    <div class="cardData">
+      <div class="flex card-container">
+        <div class="flex-none flex justify-content-center">
+          <span class="logo1" style="float: left">
+            <!-- <img src="" alt="" /> -->
+            <img src="assets/images/I D S.png" alt="" />
+            <!-- <h2>
+                <i> <b style="font-size: xx-large">PwC</b></i
+                >
+              </h2> -->
+            <!-- <img
+              class="sidenav-link-icon"
+              src="https://damshelpvideo.azureedge.net/costanalysis_charts (1).png"
+              alt=""
+            /> -->
+          </span>
+        </div>
+        <div class="flex-grow-1 flex align-items-center justify-content-center">
+          <span
+            style="margin-top: -4% !important;"
+            class="title1"
+            >Vehicle Incident Detection System
+          </span>
+        </div>
+        <div
+          style="margin-top: 10px !important"
+          class="flex-none flex align-items-center justify-content-center m-2 px-3"
+        >
+          <!-- <img
+              src="assets/Images/notification_icon.png"
+              class="pi pi-angle-double-right"
+              alt=""
+            /> -->
+          &nbsp; &nbsp;
+          <!-- <span class="profile" (click)="op.toggle($event)">
+              {{ userName.substring(0, 1) | uppercase }}</span
+            > -->
+          <span class="profile" (click)="logout()"> Logout</span>
+          <p-overlayPanel #op>
+            <ng-template pTemplate> </ng-template>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Left Panel -->
+    <div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed' : ''">
+      <div class="logo-container">
+        <span *ngIf="!collapsed" class="toggleIcon" (click)="toggleCollapse()">
+          <img
+            src="assets/images/collapse_out.png"
+            class="pi pi-angle-double-right"
+            alt=""
+         
+          />
+        </span>
+  
+        <span *ngIf="collapsed" class="toggleIcon" (click)="toggleCollapse()">
+          <img
+              src="assets/images/collapse_in.png"
+              class="pi pi-angle-double-left"
+              alt=""
+             
+            />
+          <!-- &nbsp; Collapse -->
+        </span>
+        <div class="logo-text" *ngIf="collapsed"></div>
+      </div>
+      <ul class="sidenav-nav">
+        <li class="sidenav-nav-item" *ngFor="let data of navData">
+          <a  
+          (click)="toggleCollapse()"
+            class="sidenav-nav-link"
+            [routerLink]="[data.routeLink]"     
+                
+          >
+            <!-- <img
+              [pTooltip]="data.label"
+              class="sidenav-link-icon"
+              [src]="[data.image]"
+              alt=""
+            /> -->
+            <!-- <span class="pi {{data.icon}} sidenav-link-icon" >
+              
+            </span> -->
+            <span [pTooltip]="data.tooltip" style="color: rgb(255, 255, 255);"  class=" sidenav-link-icon " >
+              
+              <mat-icon>{{data.icon }}</mat-icon>
+            </span>
+            <span *ngIf="collapsed">
+              {{ data.name }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  
+    <div class="pages" (click)="onclicktoggal()">
+      <router-outlet></router-outlet>
+      <div class="bradcrumb">
+          
+          <ng-template #iconTemplate>
+            <i class="pi pi-chevron-right" styleClass="bradcrumb readonly" ></i>
+          </ng-template>
+        </div>
+      <span style="zoom: 100%"> </span>
+      
+    </div>
+  </div>
+  

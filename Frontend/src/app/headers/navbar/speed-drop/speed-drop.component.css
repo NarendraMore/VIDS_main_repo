@@ -1,0 +1,157 @@
+.WrongsideTable {
+    margin-top: 4%;
+    width: 100%;
+}
+
+.videoShow {}
+
+.grid-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* padding-bottom: 5px; */
+    gap: 1px;
+
+
+}
+:host::ng-deep .searchCalender{
+  /* margin-left: 20px; */
+  float: right;
+  width: 70%;
+  font-size: medium !important;
+  border: 1px solid #707070 !important;
+  border-radius: 6px;
+  margin-right: 2%  ;
+}
+
+::ng-deep.dropdown {
+    /* box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.2); */
+    width: 100%;
+    border-color: #6366f1 !important;
+    height: 43px;
+}
+::ng-deep.dropdown1 {
+    /* box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.2); */
+    width: 100%;
+    border-color: #6366f1 !important;
+    height: 43px;
+
+}
+.calendarStyle {
+    width: 100% !important;
+}
+
+.inputStyle {
+    width: 185px;
+    height: 42px;
+    border-color: #6366f1;
+}
+.inputDateStyle{
+    width: 185px;
+    height: 42px;
+
+    border-radius: 1svh;
+    border: 1px solid #6366f1;
+}
+
+.inputDropdownStyle {
+    width: 185px;
+    height: 30px !important;
+    border-color: #6366f1 !important;
+}
+
+.speedDropDownload {
+    height: 43px;
+    width: 35px;
+    background-color: #4d3f72;
+    border: none;
+}
+.searchInputSpeedDrop{
+    background-color: #DFE0E5 !important;
+    color: black !important;
+    font-size: medium !important;
+    border: 1px solid #707070 !important;
+    float: right !important;
+}
+
+::ng-deep .speedDropTable {
+    margin-top: 1rem !important;
+    border-radius: 1px;
+    overflow: hidden !important;
+    border: 1px solid #707070;
+  }
+
+  .tableHeader::ng-deep  {
+
+    color: #191919 !important;
+    border-bottom: none !important;
+    padding: 7px !important;
+  }
+  .tableHeader::ng-deep * {
+    background-color: #c5c0c9 !important;
+  
+  }
+  tr:nth-child(even) {
+    background-color: #e8e8e8; /* Lighter shade than the background color */
+  }
+  
+  /* Odd rows */
+  tr:nth-child(odd) {
+    background-color: #d3d4d9; /* Slightly darker shade than the background color */
+  }
+  ::ng-deep .customPaginator .p-paginator {
+    background-color: #c5c0c9 !important;
+    border: 1px solid #707070;
+    border-radius: 1px;
+  }
+  
+  .customPaginator .p-paginator .ui-paginator-page {
+    color: white;
+  }
+
+  ::ng-deep .speedDopStatus * {
+    background-color: #dfe0e5;
+  }
+
+  .inputDateStyle {
+    width: 185px;
+    height: 42px;
+  
+    border-radius: 1px;
+    border: 1px solid #4d3f72;
+  }
+
+  .inputStyle {
+    width: 185px;
+    height: 42px;
+    border-color: #4d3f72 !important;
+    color: #191919 !important;
+    border-radius: 1px;
+  }
+
+  :host::ng-deep .inputDropdownStyle * {
+    border-color: #4d3f72 !important;
+    color: #191919 !important;
+    border-radius: 1px;
+  
+  }
+  
+  ::ng-deep .inputDropdownStyle {
+    color: #191919 !important;
+    width: 185px;
+    height: 30px !important;
+  }
+
+  .reportBtn {
+    height: 38px;
+    border-color: #4d3f72;
+    color: #191919;
+    margin-left: 0.8rem;
+    border-radius: 1px;
+  }
+  .cancelBtn {
+    height: 38px;
+    border-color: #4d3f72;
+    color: #191919;
+    border-radius: 1px;
+  }

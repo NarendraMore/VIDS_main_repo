@@ -1,0 +1,553 @@
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=`${environmet}`"></script> -->
+<div>
+  <div style="float: left; width: 100%">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 2%;
+      "
+    >
+      <span style="display: flex">
+        <p-dropdown
+          styleClass="eventDropDown"
+          placeholder="Filter By Event"
+          [options]="eventType"
+          [(ngModel)]="selectedEvent"
+          defaultLabel="event"
+          optionLabel="eventName"
+          optionValue="eventName"
+          selectedItemLabel="{0} items selected"
+          dropdownIcon="pi pi-filter"
+          (onChange)="filterDataByEvent(selectedEvent)"
+          (onClear)="loadLatestEvents()"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="event"
+        >
+        </p-dropdown>
+        &nbsp;&nbsp;
+        <p-calendar
+          placeholder="Select Date"
+          [showIcon]="true"
+          [showClear]="true"
+          (onClear)="loadLatestEvents()"
+          inputId="icon"
+          styleClass="searchCalender"
+          [(ngModel)]="dateForSearch"
+          (onSelect)="searchByDate(dateForSearch)"
+        ></p-calendar>
+      </span>
+
+      <span>
+        <button
+          (click)="onclickCameraStatus()"
+          class="cameraBtn p-button-sm"
+          pButton
+          pRipple
+          label="Camera Status"
+          pTooltip=""
+        ></button>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="onInputChange($event)"
+            placeholder="Search"
+            class="p-inputtext-sm searchInputBoxRole"
+            [(ngModel)]="keyWord"
+          />
+        </span>
+      </span>
+    </div>
+
+    <div class="grid">
+      <div class="col-8">
+        <p-table
+          [globalFilterFields]="[
+            'event',
+            'date',
+            'time',
+            'cameratype',
+            'location'
+          ]"
+          #dt
+          [value]="latestEvents"
+          [rows]="itemsPerPage"
+          [paginator]="false"
+          styleClass="p-datatable-sm dashboardTable"
+        >
+          <!-- <ng-template pTemplate="caption"> Latest Event </ng-template> -->
+          <ng-template pTemplate="header">
+            <tr class="tableHeader">
+              <th style="width: 10%">Event</th>
+              <th pSortableColumn="date" style="width: 10%">
+                Date<p-sortIcon field="date"></p-sortIcon>
+              </th>
+              <th style="width: 15%">Time</th>
+              <th style="width: 15%">Camera</th>
+              <th pSortableColumn="location" style="width: 20%">
+                Location<p-sortIcon field="location"></p-sortIcon>
+              </th>
+              <th style="width: 5%">Image</th>
+              <!-- <th>Status</th> -->
+              <th style="width: 25%">Action</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-event let-i of index>
+            <tr>
+              <td>{{ event.event }}</td>
+              <td>{{ event.date | date : "dd/MM/yyyy" }}</td>
+              <td>{{ event.time }}</td>
+              <td>{{ event.cameratype }}</td>
+              <td>{{ event.location }}</td>
+              <td>
+                <button
+                  pTooltip="Image"
+                  style="
+                    height: 35px;
+                    width: 35px;
+                    background-color: #4d3f72;
+                    border: none;
+                  "
+                  (click)="onclickLatesevent(event._id, event.event)"
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-image"
+                  class="p-button-rounded"
+                ></button>
+              </td>
+              <!-- <td>
+              <button [ngStyle]="{'background-color': isSeen ? 'green' : 'red'}" style="height: 35px;border: none;"  pButton type="button" >{{ event.status }}</button></td> -->
+              <td style="width: 15%">
+                <button
+                  pTooltip="Delete"
+                  tooltipPosition="left"
+                  [disabled]="isButtonBDisabled"
+                  style="
+                    height: 35px;
+                    width: 35px;
+                    background-color: #4d3f72;
+                    border: none;
+                  "
+                  (click)="onClickfalseDetection(event._id, event)"
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded"
+                ></button>
+                &nbsp;
+                <button
+                  pTooltip="Bookmark"
+                  tooltipPosition="left"
+                  *ngIf="event.bookmarked === false"
+                  style="
+                    height: 35px;
+                    width: 35px;
+                    background-color: #4d3f72;
+                    border: none;
+                  "
+                  (click)="onclickBookmark(event._id, event)"
+                  pButton
+                  pRipple
+                  icon="pi pi-bookmark"
+                  class="p-button-rounded"
+                  [ngClass]="{ highlight: isBookmarked }"
+                ></button>
+                <button
+                  pTooltip="Bookmarked"
+                  tooltipPosition="left"
+                  *ngIf="event.bookmarked === true"
+                  style="
+                    height: 35px;
+                    width: 35px;
+                    background-color: #4d3f72;
+                    border: none;
+                  "
+                  pButton
+                  pRipple
+                  icon="pi pi-bookmark-fill"
+                  class="p-button-rounded"
+                ></button>
+                &nbsp;
+                <button
+                  pTooltip="True"
+                  tooltipPosition="left"
+                  style="height: 35px; width: 35px"
+                  (click)="onClickTrueDetection(event._id, event)"
+                  pButton
+                  pRipple
+                  type="button"
+                  icon="pi pi-check"
+                  [ngClass]="{
+                    'p-button-rounded': true,
+                    active: event.isActive
+                  }"
+                  class="p-button-rounded mybutton"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="(currentPage - 1) * itemsPerPage"
+          [rows]="itemsPerPage"
+          [totalRecords]="totalItems"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Showing {{ first + 1 }} to {{
+            first + itemsPerPage
+          }} of {{ totalItems }} entries"
+          class="customPaginator"
+        ></p-paginator>
+      </div>
+      <div class="col-4">
+        <div>
+          <span
+            style="
+              font-size: 20px;
+              align-items: center;
+              justify-content: center;
+              display: flex;
+              background-color: #4d3f72;
+              color: white;
+            "
+            >Focused Event</span
+          >
+          <div
+            class="scrollabledivcontainer"
+            style="overflow-y: auto; overflow-x: hidden"
+          >
+            <div *ngFor="let obj of bookmark">
+              <p-card styleClass="bookmarkCard">
+                <div class="grid" style="background-color: #4d3f72">
+                  <div class="col-6" style="margin-bottom: 2%">
+                    <img
+                      style="
+                        height: 80%;
+                        width: 80%;
+                        margin-left: 10%;
+                        margin-top: 5%;
+                      "
+                      [src]="obj.imageUrl"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-6">
+                    <div style="font-size: 17px; color: white">
+                      <b>
+                        <u>{{ obj.event }}</u></b
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="grid" style="background-color: #cfc4dd">
+                  <div class="col-7" style="margin-left: 2%; color: #000000">
+                    {{ obj.location }}
+                  </div>
+                  <div class="col-4">
+                    <div
+                      style="
+                        font-style: italic;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: #000000;
+                      "
+                    >
+                      {{ obj.date | date : "dd-MMM yyyy" }}
+                    </div>
+                    <div
+                      style="
+                        font-style: italic;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: #000000;
+                      "
+                    >
+                      {{ obj.time }}
+                    </div>
+                  </div>
+                </div>
+              </p-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="card-container"
+      style="display: flex; overflow-x: auto; white-space: nowrap"
+    >
+      <div class="col-4" *ngFor="let static of staticStic">
+        <p-card styleClass="pieCard">
+          <div
+            style="
+              color: rgb(0, 0, 0);
+              font-size: 20px;
+              margin-bottom: 2%;
+              margin-left: 2%;
+            "
+          >
+            {{ static.cameratype }}
+          </div>
+
+          <div class="grid" style="margin-left: 2%">
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Animal_Detection"
+                tooltipPosition="left"
+                >AD : {{ static.Animal_Detection }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Fire_Detection"
+                tooltipPosition="left"
+                >FD : {{ static.Fire_Detection }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Object_Detection"
+                tooltipPosition="left"
+                >OD : {{ static.Object_Detection }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Wrong_Side"
+                tooltipPosition="left"
+                >WS : {{ static.Wrong_Side }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Fog_Detection"
+                tooltipPosition="left"
+                >Fog D : {{ static.Fog_Detection }}</span
+              >
+            </div>
+          </div>
+          <div class="grid" style="margin-left: 2%">
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Camera_Tampering"
+                tooltipPosition="left"
+                >CT : {{ static.Camera_Tampering }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Congestion_Detection"
+                tooltipPosition="left"
+                >CD : {{ static.Congestion_Detected }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Over_Speed"
+                tooltipPosition="left"
+                >OS : {{ static.Over_Speed }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Speed_Drop"
+                tooltipPosition="left"
+                >SD : {{ static.Speed_Drop }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Tripwire"
+                tooltipPosition="left"
+                >TP : {{ static.Tripwire }}</span
+              >
+            </div>
+          </div>
+          <div class="grid" style="margin-left: 2%">
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Illegal_Parking"
+                tooltipPosition="left"
+                >IP : {{ static.Illigal_Parking }}</span
+              >
+            </div>
+            <div class="col-2">
+              <span
+                style="color: #000000"
+                pTooltip="Personcross"
+                tooltipPosition="left"
+                >PC : {{ static.Personcross }}</span
+              >
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <footer> -->
+<!-- <div style="display: flex">
+    <p-card styleClass="pieCard">
+  
+    </p-card>
+    <p-card styleClass="barCard">
+    </p-card>
+    <p-card styleClass="comboCard">
+   
+    </p-card>
+    <p-card styleClass="lineCard">
+   
+    </p-card> -->
+<!-- </div> -->
+<!-- </footer> -->
+<!-- <div class="statusTable">
+    <p-table [value]="equipments" [paginator]="true" [rows]="3">
+      <ng-template pTemplate="caption"> List of equipments </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th>Sr No</th>
+          <th>Camera Name</th>
+          <th>IP Address</th>
+          <th>Location</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>{{ rowData.name }}</td>
+          <td>{{ rowData.ipAddress }}</td>
+          <td>{{ rowData.location }}</td>
+          <td>{{ rowData.status }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div> -->
+<div>
+  <p-dialog
+    [modal]="true"
+    header="Camera Status"
+    [(visible)]="cameraStatus"
+    [style]="{ width: '80%', height: '85vh' }"
+    styleClass="camStatus"
+  >
+    <div class="statusTable">
+      <p-table
+        [value]="equipments"
+        [paginator]="false"
+        [rows]="5"
+        styleClass="p-datatable-sm camStatusTable customPaginator"
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr class="camTableHeader">
+            <th>Sr No</th>
+            <th>IP Address</th>
+            <th>Location</th>
+            <th>Port</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-rowData
+          let-columns="columns"
+          let-rowIndex="rowIndex"
+        >
+          <tr>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>{{ rowData.ip }}</td>
+            <td>{{ rowData.location }}</td>
+            <td>{{ rowData.port }}</td>
+            <td *ngIf="rowData.status == 0">
+              <p-tag
+                severity="danger"
+                value="Deactive"
+                styleClass="deActive"
+              ></p-tag>
+            </td>
+            <td *ngIf="rowData.status == 1">
+              <p-tag
+                severity="success"
+                value="Active"
+                styleClass="Active"
+              ></p-tag>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    [modal]="true"
+    header="Google Map"
+    [(visible)]="googleMap"
+    [style]="{ width: '80%', height: '85vh' }"
+  >
+    <div class="col-5" id="google-map" style="height: 300px">
+      <img src="assets/images/gmap.png" alt="" />
+    </div>
+  </p-dialog>
+</div>
+<p-dialog
+  [modal]="true"
+  [header]="eventName"
+  [(visible)]="DashboardPhoto"
+  (onhide)="onClickCancelPhoto()"
+  [style]="{ width: '90%', height: 'auto' }"
+>
+  <div class="">
+    <div>
+      <i (click)="zoomInImage()" style="cursor: pointer">
+        <img
+          style="width: 90%; height: auto"
+          class="imgScreenshot hoverclass"
+          [src]="latestEventUrl"
+          alt=""
+        />
+      </i>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog [modal]="true"
+ [header]="eventName" 
+ [(visible)]="DashboardzoomPhoto"
+  [style]="{width: '90%', height: '100%'}"
+>
+  <div class="">
+    <div>
+      <img class="imgScreenshot hoverclass" [src]="latestEventUrl" alt="">
+    </div>
+  </div>
+</p-dialog> -->
+<!-- Notification msg's -->
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  header="Confirmation"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

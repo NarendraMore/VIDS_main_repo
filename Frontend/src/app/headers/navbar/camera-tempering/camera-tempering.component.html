@@ -1,0 +1,303 @@
+<div class="statusTable">
+  <div>
+    <b style="font-size: 22px">Camera Tempering</b>
+    <div style="float: right; display: flex">
+      <p-calendar
+        placeholder="Select Date"
+        [showIcon]="true"
+        (onClear)="loadLatestEvents()"
+        [showClear]="true"
+        inputId="icon"
+        styleClass="searchCalender"
+        [(ngModel)]="dateForSearch"
+        (onSelect)="searchByDate(dateForSearch)"
+      ></p-calendar>
+      <span>
+        <button
+          (click)="onclickDownloadReport()"
+          class="cameraDownload p-button-lg"
+          pButton
+          pRipple
+          icon="pi pi-download"
+          pTooltip="Download"
+        ></button> </span
+      >&nbsp;
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          placeholder="Search"
+          class="p-inputtext-sm searchInputCamera"
+        />
+      </span>
+    </div>
+  </div>
+  <!--     
+    <p-calendar  [(ngModel)]="startDate"  dateFormat="yy-mm-dd" ></p-calendar>&nbsp;
+    <p-calendar [(ngModel)]="endDate" dateFormat="yy-mm-dd"></p-calendar>
+    <button (click)="applyFilter()">Apply Filter</button> -->
+  <div class="WrongsideTable">
+    <p-table
+      [globalFilterFields]="['date', 'time', 'cameratype', 'location', 'event']"
+      #dt
+      [value]="wrongSideArray"
+      [rows]="itemsPerPage"
+      [paginator]="false"
+      styleClass="p-datatable-sm cameraTable customPaginator"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr class="tableHeader">
+          <th>Sr.No</th>
+          <th pSortableColumn="date" style="width: 20%">
+            Date<p-sortIcon field="date"></p-sortIcon>
+          </th>
+          <th>Time</th>
+          <th>Camera No</th>
+          <th>Event</th>
+          <th pSortableColumn="location" style="width: 20%">
+            Location<p-sortIcon field="location"></p-sortIcon>
+          </th>
+          <th style="width: 15%">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>{{ rowData.date | date : "dd-MMM yyyy" }}</td>
+          <td>{{ rowData.time | date : "HH:mm:ss" }}</td>
+          <td>{{ rowData.cameratype }}</td>
+          <td>{{ rowData.event }}</td>
+          <td>{{ rowData.location }}</td>
+
+          <td>
+            <button
+              pTooltip="Video"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickCamTripVideo(rowData._id)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-caret-right"
+              class="p-button-rounded"
+            ></button>
+            &nbsp;
+            <button
+              pTooltip="Image"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickShowphoto(rowData._id, rowData.name)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-image"
+              class="p-button-rounded"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="(currentPage - 1) * itemsPerPage"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {{ first }} to {{ itemsPerPage }} of {{
+        totalItems
+      }} entries"
+      class="customPaginator"
+    ></p-paginator>
+  </div>
+</div>
+
+<p-dialog
+  [modal]="true"
+  header="Wrong Side Detection Video"
+  [(visible)]="wrongSideVideo"
+  (onHide)="onClickCanclevideo()"
+  [style]="{ width: '80%', height: '85vh' }"
+>
+  <div class="">
+    <video #videoPlayer style="display: flex">
+      <source [src]="wrongSideVideoUrl" type="video/mp4" autoplay />
+    </video>
+
+  </div>
+</p-dialog>
+<p-dialog
+  [modal]="true"
+  header="Camera Tempering Detection Photo"
+  [(visible)]="temperingPhoto"
+  [style]="{ width: '90%', height: 'auto' }"
+  (onhide)="onClickCancelPhoto()"
+>
+  <div class="">
+    <div style="">
+      <i (click)="zoomInImage()" style="cursor: pointer">
+        <img
+          class=""
+          style="width: 90%; height: auto"
+          [src]="temperingImageUrl"
+          alt=""
+        />
+      </i>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog [modal]="true" header="Camera Tempering Detection Photo" [(visible)]="temperingzoomPhoto"
+    [style]="{width: '90%', height: '100%'}">
+    <div class="">
+        <div style="">
+            <img id="zoomedImage" class="" [src]="temperingImageUrl" alt="">
+        </div>
+
+    </div>
+</p-dialog> -->
+<p-dialog
+  [modal]="true"
+  header="Download Camera Tempering Report"
+  [closable]="false"
+  [(visible)]="downloadReport"
+  [style]="{ width: '70%', height: '55vh' }"
+  [closable]="true"
+  styleClass="tempringStatus"
+  (onHide)="onClickCancel()"
+>
+  <form action="" [formGroup]="downloadForm">
+    <div class="grid">
+      <!-- <div class="col-4">
+                <div class="grid-content">
+                    <label for="">Table Name </label>
+
+                    <input class="inputStyle" formControlName="tableName" ngClass="formInput" type="text" pInputText
+                        placeholder="Enter" required readonly />
+
+                </div>
+            </div> -->
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Start Date <span style="color: red">*</span></label>
+          <input
+            type="date"
+            class="inputDateStyle"
+            formControlName="startDate"
+            appendTo="body"
+            dateFormat="yy-mm-dd"
+            required
+            inputId="dateformat"
+            (change)="onDateChange1($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">End Date <span style="color: red">*</span></label>
+          <input
+            type="date"
+            class="inputDateStyle"
+            formControlName="endDate"
+            appendTo="body"
+            dateFormat="yy-mm-dd"
+            required
+            inputId="dateformat1"
+            (change)="onDateChange($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Choose Camera <span style="color: red">*</span> </label>
+          <p-dropdown
+            class="inputDropdownStyle"
+            formControlName="cameratype"
+            (onChange)="onclickcameraEvent($event)"
+            optionLabel="cameraTypes"
+            [options]="cameraType"
+            optionValue="cameraTypes"
+            appendTo="body"
+            styleClass="dropdown1"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Start Time <span style="color: red">*</span></label>
+          <input
+            class="inputStyle"
+            formControlName="startTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            placeholder="Enter"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">End Time <span style="color: red">*</span></label>
+          <input
+            class="inputStyle"
+            formControlName="endTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            [max]="today"
+            placeholder="Enter"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Choose Format <span style="color: red">*</span></label>
+          <p-dropdown
+            (onChange)="onDropdownChange($event)"
+            class="inputDropdownStyle"
+            formControlName="formate"
+            optionLabel="formates"
+            [options]="formate"
+            optionValue="formates"
+            appendTo="body"
+            styleClass="dropdown"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="grid"></div>
+
+    <div style="float: right; margin-top: 3%">
+      <button
+        (click)="onClickCancel()"
+        pButton
+        label="Cancel"
+        type="button"
+        pRipple
+        icon="pi pi-times-circle"
+        class="cancelBtn p-button-outlined"
+      ></button
+      >&nbsp;
+      <button
+        (click)="onClickDownloadReport()"
+        [disabled]="!downloadForm.valid"
+        class="reportBtn p-button-outlined"
+        pButton
+        label="download"
+        type="button"
+        pRipple
+        icon="pi pi-download"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

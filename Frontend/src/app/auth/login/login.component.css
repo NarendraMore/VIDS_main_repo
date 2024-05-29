@@ -1,0 +1,19 @@
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* max-width: 100%; */
+    min-height: 100vh;
+    background-image: url("src/assets/images/vids3.jpg"); 
+     flex-direction: column;
+    background-size: cover; 
+    background-position: center;
+    
+  }
+  
+  
+  form {
+    width: 300px;
+  } 
+    

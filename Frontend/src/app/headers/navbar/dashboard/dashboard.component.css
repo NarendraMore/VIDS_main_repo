@@ -1,0 +1,229 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) repeat(8, 1fr);
+  /* grid-template-columns: 1fr 1fr; */
+  gap: 20px;
+  /* Adjust the gap between columns */
+}
+
+.map-container {
+  border: 1px solid black;
+}
+
+.cameraBtn {
+  background-color: #4d3f72;
+  border: none;
+  color: white;
+  margin-right: 5px;
+}
+.table-container {
+  float: right;
+
+  /* border: 1px dashed red; */
+  /* height: 40%; */
+}
+
+.gmapImg {
+  height: 100%;
+  width: 100%;
+}
+
+.mybutton.active {
+  background-color: #04cf0e;
+}
+.active {
+  height: 35px !important;
+  width: 35px;
+  background-color: #04cf0e;
+}
+.statusTable {
+  margin-top: 1%;
+}
+:host::ng-deep .eventDropDown * {
+  background-color: #4d3f72 !important;
+  color: white !important;
+}
+
+::ng-deep .eventDropDown {
+  background-color: #4d3f72 !important;
+  color: white !important;
+  /* margin-bottom: 10px; */
+  border-radius: 2px;
+  width: 112%;
+}
+:host::ng-deep .locationDropDown * {
+  background-color: #6366f1 !important;
+  color: white !important;
+}
+
+::ng-deep .locationDropDown {
+  background-color: #6366f1 !important;
+  color: white !important;
+  margin-bottom: 10px;
+  border-radius: 2px;
+}
+::ng-deep .sortIcon {
+  color: #26776d !important;
+  /* width: 100px; */
+}
+::ng-deep .dashboardTable {
+  /* margin-top: 0.5rem !important; */
+  border-radius: 1px;
+  color: #191919 !important;
+  overflow: hidden !important;
+  border: 1px solid #707070;
+  
+}
+.highlight {
+ 
+  border: 2px solid yellow; 
+}
+
+.scrollabledivcontainer {
+  max-height: 41rem; 
+
+  /* overflow: auto; */
+
+width: 100%;
+  margin-bottom: 10px; 
+
+}
+
+/* .scrollableStatic{
+  overflow: hidden;
+
+} */
+
+  .scrollablediv {
+    max-height: 200px; 
+    overflow-y: auto;
+    /* border: 1px solid #ccc;  */
+  }
+::ng-deep.tableHeader {
+  color: #191919 !important;
+  border-bottom: none !important;
+  padding: 7px !important;
+}
+::ng-deep .tableHeader * {
+  background-color: #c5c0c9;
+}
+tr:nth-child(even) {
+  background-color: #e8e8e8; /* Lighter shade than the background color */
+}
+
+/* Odd rows */
+tr:nth-child(odd) {
+  background-color: #d3d4d9; /* Slightly darker shade than the background color */
+}
+::ng-deep .searchInputBoxRole {
+  background-color: #dfe0e5 !important;
+  color: black !important;
+  font-size: medium !important;
+  border: 1px solid #707070 !important;
+  height: 2.4rem;
+}
+
+::ng-deep .customPaginator .p-paginator {
+  background-color: #c5c0c9 !important;
+  border: 1px solid #707070;
+  border-radius: 1px;
+}
+
+.customPaginator .p-paginator .ui-paginator-page {
+  color: white;
+}
+
+::ng-deep .camStatus * {
+  background-color: #dfe0e5;
+}
+
+::ng-deep .camStatusTable {
+  margin-top: 1rem !important;
+  border-radius: 1px;
+  color: #191919 !important;
+  overflow: hidden !important;
+  border: 1px solid #707070;
+}
+
+::ng-deep.camTableHeader {
+  color: #191919 !important;
+  border-bottom: none !important;
+  padding: 7px !important;
+}
+::ng-deep .camTableHeader * {
+  background-color: #c5c0c9;
+}
+
+::ng-deep .pieCard {
+  width: 100%;
+  /* margin-left: 20px;
+  margin-right: 20px; */
+  background-color: #d3d4d9;
+  /* border-top: 4px solid #0097a7; */
+  font-size: 16px;
+  color: #ffffff;
+  margin: 0;
+
+}
+::ng-deep .p-card .p-card-body {
+  padding:  0rem;
+}
+
+::ng-deep .barCard {
+  width: 300px;
+  margin-left: 10px;
+  margin-right: 20px;
+  background-color: #e91e63;
+  border-top: 4px solid #ad1457;
+  font-size: 16px;
+  color: #ffffff;
+}
+::ng-deep .comboCard {
+  width: 300px;
+  border-top: 4px solid #f47b08;
+  background-color: #ffb300;
+  margin-right: 20px;
+  font-size: 16px;
+  color: #ffffff;
+}
+::ng-deep .lineCard {
+  width: 300px;
+  border-top: 4px solid #455a64;
+  background-color: #607d8b;
+  margin-right: 20px;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+::ng-deep .deActive {
+  background-color: rgb(220, 11, 11);
+  color: black;
+}
+
+::ng-deep .Active {
+  background-color: rgb(90, 222, 90);
+  color: black;
+}
+
+
+:host::ng-deep .bookmarkCard{
+background-color: #dfe0e5;
+}
+
+:host::ng-deep .searchCalender{
+  margin-left: 20px;
+  width: 70%;
+  font-size: medium !important;
+  border: 1px solid #707070 !important;
+  border-radius: 6px;
+}
+
+
+::ng-deep .p-calendar .p-inputtext{
+  background-color: #dfe0e5 !important;
+  color: black !important;
+}
+::ng-deep .p-button.p-button-icon-only {
+  background-color: #4d3f72;
+  border: none;
+}

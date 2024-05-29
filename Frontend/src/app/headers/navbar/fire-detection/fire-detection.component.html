@@ -1,0 +1,304 @@
+<div class="statusTable">
+  <div>
+    <b style="font-size: 22px">Fire Detection</b>
+    <div style="float: right; display: flex">
+      <p-calendar
+      placeholder="Select Date"
+      [showIcon]="true"
+      (onClear)="loadLatestEvents()"
+      [showClear]="true"
+      inputId="icon"
+      styleClass="searchCalender"
+      [(ngModel)]="dateForSearch"
+      (onSelect)="searchByDate(dateForSearch)"
+    ></p-calendar>
+      <span>
+        <button
+          (click)="onclickDownloadReport()"
+          class="fireDownload p-button-lg"
+          pButton
+          pRipple
+          icon="pi pi-download"
+          pTooltip="Download"
+        ></button> </span
+      >&nbsp;
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          placeholder="Search"
+          class="p-inputtext-sm searchInputFire"
+        />
+      </span>
+    </div>
+  </div>
+  <div class="FiredetectionTable">
+    <p-table
+      [globalFilterFields]="['date', 'time', 'cameratype', 'location']"
+      #dt
+      [value]="FiredetectionArray"
+      [rows]="itemsPerPage"
+      [paginator]="false"
+      styleClass="p-datatable-sm fireTable customPaginator"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr class="tableHeader">
+          <th>Sr.No</th>
+          <th pSortableColumn="date" style="width: 20%">
+            Date<p-sortIcon field="date"></p-sortIcon>
+          </th>
+          <th>Time</th>
+          <th>Camera No</th>
+          <th pSortableColumn="location" style="width: 20%">
+            Location <p-sortIcon field="location"></p-sortIcon>
+          </th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>{{ rowData.date | date : "dd-MMM yyyy"  }}</td>
+         <td>{{ rowData.time}}</td>
+          <td>{{ rowData.cameratype }}</td>
+          <td>{{ rowData.location }}</td>
+          <td>
+            <button
+              pTooltip="Video"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickfireVideo(rowData._id)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-caret-right"
+              class="p-button-rounded"
+            ></button>
+            &nbsp;
+            <button
+              pTooltip="Image"
+              tooltipPosition="left"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickfirePhoto(rowData._id)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-image"
+              class="p-button-rounded"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="(currentPage - 1) * itemsPerPage"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {{ first }} to {{ itemsPerPage }} of {{
+        totalItems
+      }} entries"
+      class="customPaginator"
+    ></p-paginator>
+  </div>
+</div>
+<p-dialog
+  [modal]="true"
+  header="fire Detection Video"
+  [(visible)]="fireVideo"
+  [style]="{ width: '80vh', height: 'auto' }"
+  (onhide)="onClickCanclevideo()"
+>
+  <div class="">
+    <!-- <video controls style="height: 50vh;width: 100%;">
+            <source [src]="fireVideoUrl" type="video/mp4">
+           
+        </video> -->
+    <video #videoPlayer width="470" height="300" controls autoplay>
+      <source [src]="fireVideoUrl" type="video/mp4" />
+    </video>
+  </div>
+</p-dialog>
+<p-dialog
+  [modal]="true"
+  header="fire Detection Photo"
+  [(visible)]="firePhoto"
+  [style]="{ width: '90%', height: 'auto' }"
+  (onhide)="onClickCancelPhoto()"
+>
+  <div class="">
+    <i (click)="zoomInImage()" style="cursor: pointer">
+      <div>
+        <img
+          style="width: 90%; height: auto"
+          class="imgScreenshot hoverclass"
+          [src]="fireImageUrl"
+          alt=""
+        />
+      </div>
+    </i>
+  </div>
+</p-dialog>
+<!-- <p-dialog [modal]="true" header="Fire Detection Photo" [(visible)]="firezoomPhoto"
+    [style]="{width: '80%', height: '100%'}">
+    <div class="">
+        <div style="">
+            <img id="zoomedImage" class="" [src]="fireImageUrl" alt="">
+        </div>
+
+    </div>
+</p-dialog> -->
+
+<p-dialog
+  [modal]="true"
+  header="Download Fire Detection Report"
+  [closable]="true"
+  [(visible)]="downloadReport"
+  [style]="{ width: '70%', height: '55vh' }"
+  styleClass="fireStatus"
+  (onHide)="onClickCancel()"
+>
+  <form action="" [formGroup]="downloadForm">
+    <div class="grid">
+      <!-- <div class="col-4">
+                <div class="grid-content">
+                    <label for="taluka">Table Name</label>
+                    <input class="inputStyle" formControlName="tableName" ngClass="formInput" type="text" pInputText
+                        placeholder="Enter" required readonly />
+
+                </div>
+            </div> -->
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="village"
+            >Start Date <span style="color: red">*</span></label
+          >
+          <input
+            type="date"
+            class="inputDateStyle5"
+            formControlName="startDate"
+            appendTo="body"
+            required
+            dateFormat="yy-mm-dd"
+            inputId="dateformat"
+            (change)="onDateChange1($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="village"
+            >End Date <span style="color: red">*</span></label
+          >
+          <input
+            type="date"
+            class="inputDateStyle5"
+            formControlName="endDate"
+            appendTo="body"
+            required
+            dateFormat="yy-mm-dd"
+            inputId="dateformat1"
+            (change)="onDateChange($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Choose Camera <span style="color: red">*</span></label>
+          <p-dropdown
+            class="inputDropdownStyle"
+            formControlName="cameratype"
+            optionLabel="cameraTypes"
+            [options]="cameraType"
+            optionValue="cameraTypes"
+            appendTo="body"
+            styleClass="dropdown5"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state"
+            >Start Time <span style="color: red">*</span>
+          </label>
+          <input
+            class="inputStyle"
+            formControlName="startTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            placeholder="Enter"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state">End Time <span style="color: red">*</span></label>
+          <input
+            class="inputStyle"
+            formControlName="endTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            [max]="today"
+            placeholder="Enter"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state"
+            >Choose Formate <span style="color: red">*</span></label
+          >
+          <p-dropdown
+            (onChange)="onDropdownChange($event)"
+            class="inputDropdownStyle"
+            formControlName="formate"
+            optionLabel="formates"
+            [options]="formate"
+            optionValue="formates"
+            appendTo="body"
+            styleClass="dropdown5"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="grid"></div>
+
+    <div style="float: right; margin-top: 3%; display: flex;">
+      <button
+        (click)="onClickCancel()"
+        class="cancelBtn p-button-outlined"
+        pButton
+        label="Cancel"
+        type="button"
+        pRipple
+        icon="pi pi-times-circle"
+      ></button
+      >&nbsp;
+      <button
+        (click)="onClickDownloadReport()"
+        [disabled]="!downloadForm.valid"
+        pButton
+        class="reportBtn p-button-outlined"
+        label="download"
+        type="button"
+        pRipple
+        icon="pi pi-download"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

@@ -1,0 +1,300 @@
+<div class="statusTable">
+  <div>
+    <b style="font-size: 22px">Animal Detection</b>
+    <div style="float: right; display: flex">
+      <p-calendar
+      placeholder="Select Date"
+      [showIcon]="true"
+      (onClear)="loadLatestEvents()"
+      [showClear]="true"
+      inputId="icon"
+      styleClass="searchCalender"
+      [(ngModel)]="dateForSearch"
+      (onSelect)="searchByDate(dateForSearch)"
+    ></p-calendar>
+      <span>
+        <button
+          (click)="onclickDownloadReport()"
+          class="animalDownload p-button-lg"
+          pButton
+          pRipple
+          icon="pi pi-download"
+          pTooltip="Download"
+        ></button> </span
+      >&nbsp;
+      <span class="p-input-icon-left">
+        
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          placeholder="Search"
+          class="p-inputtext-sm searchInputAnimal"
+        />
+      </span>
+    </div>
+  </div>
+  <div class="animaldetectionTable">
+    <p-table
+      [globalFilterFields]="['date', 'time', 'cameratype', 'location']"
+      #dt
+      [value]="animaldetectionArray"
+      [rows]="itemsPerPage"
+      [paginator]="false"
+      styleClass="p-datatable-sm animalTable customPaginator"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr class="tableHeader">
+          <th>Sr.No</th>
+          <th pSortableColumn="date" style="width: 20%">
+            Date<p-sortIcon field="date"></p-sortIcon>
+          </th>
+          <th>Time</th>
+          <th>Camera No</th>
+          <th pSortableColumn="location" style="width: 20%">
+            Location<p-sortIcon field="location"></p-sortIcon>
+          </th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr>
+          <td>{{ rowIndex + 1 }}</td>
+          <td>{{ rowData.date| date : "dd-MMM yyyy"  }}</td>
+         <td>{{ rowData.time}}</td>
+          <td>{{ rowData.cameratype }}</td>
+          <td>{{ rowData.location }}</td>
+          <td>
+            <button
+              pTooltip="Video"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickanimalVideo(rowData._id)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-caret-right"
+              class="p-button-rounded"
+            ></button>
+            &nbsp;
+            <button
+              pTooltip="Image"
+              tooltipPosition="left"
+              style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickanimalPhoto(rowData._id)"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-image"
+              class="p-button-rounded"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="(currentPage - 1) * itemsPerPage"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {{ first }} to {{ itemsPerPage }} of {{
+        totalItems
+      }} entries"
+      class="customPaginator"
+    ></p-paginator>
+  </div>
+</div>
+
+<p-dialog
+  [modal]="true"
+  header="Animal Detection Video"
+  [(visible)]="animalVideo"
+  [style]="{ width: '70vh', height: 'auto' }"
+  (onHide)="onClickCanclevideo()"
+>
+  <div class="">
+    <video #videoPlayer width="470" height="300" controls autoplay>
+      <source [src]="animalvideoUrl" type="video/mp4" />
+    </video>
+   
+  </div>
+</p-dialog>
+<p-dialog
+  [modal]="true"
+  header="Animal Detection Photo"
+  (onHide)="onClickCanclePhoto()"
+  [(visible)]="animalPhoto"
+  [style]="{ width: '90%', height: 'auto' }"
+>
+  <div class="">
+    <div>
+      <i (click)="zoomInImage()">
+        <img
+          class="imgScreenshot hoverclass"
+          style="width: 90%; height: auto"
+          [src]="animalImageUrl"
+          alt=""
+        />
+      </i>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog [modal]="true" header="Animal Detection Photo" [(visible)]="animalzoomPhoto"
+    [style]="{width: '90%', height: '100%'}">
+    <div class="">
+        <div style="">
+            <img id="zoomedImage" class="" [src]="animalImageUrl" alt="">
+        </div>
+
+    </div>
+</p-dialog> -->
+
+<p-dialog
+  [modal]="true"
+  header="Download Animal Detection Report"
+  [closable]="true"
+  [(visible)]="downloadReport"
+  [style]="{ width: '70%', height: '55vh' }"
+  styleClass="camStatus"
+  (onHide)="onClickCancel()"
+>
+  <form action="" [formGroup]="downloadForm">
+    <div class="grid">
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="village"
+            >Start Date <span style="color: red">*</span></label
+          >
+          <input
+            type="date"
+            class="inputDateStyle1"
+            formControlName="startDate"
+            appendTo="body"
+            required
+            dateFormat="yy-mm-dd"
+            inputId="dateformat"
+            placeholder="Select Date"
+            (change)="onDateChange1($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="village"
+            >End Date <span style="color: red">*</span></label
+          >
+          <input
+            type="date"
+            class="inputDateStyle1"
+            formControlName="endDate"
+            [max]="today"
+            appendTo="body"
+            required
+            dateFormat="yy-mm-dd"
+            inputId="dateformat1"
+            placeholder="Select Date"
+            (change)="onDateChange($event)"
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="">Choose Camera <span style="color: red">*</span></label>
+          <p-dropdown
+            class="inputDropdownStyle"
+            formControlName="cameratype"
+            optionLabel="cameraTypes"
+            [options]="cameraType"
+            optionValue="cameraTypes"
+            appendTo="body"
+            styleClass="dropdown3"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state"
+            >Start Time <span style="color: red">*</span></label
+          >
+          <input
+            class="inputStyle"
+            formControlName="startTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            placeholder="Enter"
+            required
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state">End Time <span style="color: red">*</span> </label>
+          <input
+            class="inputStyle"
+            formControlName="endTime"
+            ngClass="formInput"
+            type="time"
+            pInputText
+            placeholder="Enter"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="grid-content">
+          <label for="state"
+            >Choose Formate <span style="color: red">*</span></label
+          >
+          <p-dropdown
+            (onChange)="onDropdownChange($event)"
+            class="inputDropdownStyle inputStyle"
+            formControlName="formate"
+            optionLabel="formates"
+            [options]="formate"
+            optionValue="formates"
+            appendTo="body"
+            styleClass="dropdown2"
+            placeholder="Select"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid"></div>
+    <div style="float: right; margin-top: 3%; display: flex;">
+      <button
+        (click)="onClickCancel()"
+      
+        class=" cancelBtn p-button-outlined"
+        pButton
+        label="Cancel"
+        type="button"
+        pRipple
+        icon="pi pi-times-circle"
+      ></button>
+      <button
+        (click)="onClickDownloadReport()"
+        [disabled]="!downloadForm.valid"
+        style=""
+        class="reportBtn p-button-outlined"
+        pButton
+        label="download"
+        type="button"
+        icon="pi pi-download"
+        pRipple
+      ></button>
+    </div>
+  </form>
+</p-dialog>
