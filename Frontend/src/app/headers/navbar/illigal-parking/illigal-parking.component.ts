@@ -104,11 +104,32 @@ export class IlligalParkingComponent {
         this.totalItems = illegaldata.totalItems;
       });
   }
+  keyWord:string='';
+  formattedDate:any
   onPageChange(event: any): void {
     console.log('onPageChange triggered:', event);
     this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
     sessionStorage.setItem('currentPage',this.currentPage)
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event = "Illegal_Parking";
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.illigalArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
   onclickDownloadReport() {
     this.downloadReport = true;
@@ -116,11 +137,16 @@ export class IlligalParkingComponent {
 
   searchByDate(data: any) {
     console.log(data, "calender Date");
-    const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
-
-    console.log(formattedDate, "Formatted Date");
+    this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
+    let event = "Illegal_Parking";
+    console.log(this.formattedDate, "Formatted Date");
     this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
+      .getDataBySearchonDate1(
+        event,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
       .subscribe((data: any) => {
         console.log("formate data", data);
         this.illigalArray = data.latestEvents;

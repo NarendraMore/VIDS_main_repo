@@ -102,30 +102,55 @@ export class ObjectDetectionComponent {
         this.objectDetection = objectdetection;
       });
   }
+  keyWord: string = "";
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1;
     sessionStorage.setItem('currentPage',this.currentPage)
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event ='Object_Detection'
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+         this.objectdetectionArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
 
   onClickCanclevideo() {
     this.objectvideoUrl = "";
     this.objectVideos = false;
   }
-
+  formattedDate: any;
   searchByDate(data: any) {
     console.log(data, "calender Date");
-    const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
-
-    console.log(formattedDate, "Formatted Date");
-    this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
-      .subscribe((data: any) => {
-        console.log("formate data", data);
-        this.objectdetectionArray = data.latestEvents;
-        this.totalItems = data.totalItems;
-      });
+     this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
+     let event = "Object_Detection";
+     console.log(this.formattedDate, "Formatted Date");
+     this.eventservice
+       .getDataBySearchonDate1(
+         event,
+         this.formattedDate,
+         sessionStorage.getItem("currentPage"),
+         this.itemsPerPage
+       )
+       .subscribe((data: any) => {
+         console.log("formate data", data);
+         this.objectdetectionArray = data.latestEvents;
+         this.totalItems = data.totalItems;
+       });
   }
   onClickobjectVideo(id: any) {
     this.objectVideos = true;

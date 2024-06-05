@@ -116,23 +116,49 @@ export class CongestionComponent {
         this.totalItems = congestionData.totalItems;
       });
   }
-
+keyWord:string= '';
   onPageChange(event: any): void {
     console.log('onPageChange triggered:', event);
     this.currentPage = event.page + 1; 
     sessionStorage.setItem('currentPage',this.currentPage)
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event = "Congestion_Detected";
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.congestionArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
+
+  formattedDate:any
   searchByDate(data: any) {
     console.log(data, "calender Date");
-    const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
-
-    console.log(formattedDate, "Formatted Date");
+     this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
+    let event = "Congestion_Detected";
+    console.log(this.formattedDate, "Formatted Date");
     this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
+      .getDataBySearchonDate1(
+        event,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
       .subscribe((data: any) => {
-        console.log("formate data", data);
         this.congestionArray = data.latestEvents;
+        console.log("formate data", this.congestionArray);
         this.totalItems = data.totalItems;
       });
   }

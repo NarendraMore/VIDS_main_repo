@@ -34,7 +34,7 @@ export class CameraTemperingComponent {
   wrongSideVideo: boolean = false;
   temperingPhoto: boolean = false;
   Wrongside: any;
-  wrongSideArray: wrongside[] = [];
+  cameraTemperingArray: wrongside[] = [];
   temperingId: any;
   temperingvideoId: any;
   endDate: any = this.formatDate(new Date());
@@ -56,7 +56,7 @@ export class CameraTemperingComponent {
   applyFilter() {
     // Filter your data based on the selected date range
     if (this.startDate && this.endDate) {
-      this.wrongSideArray = this.wrongSideArray.filter((item) => {
+      this.cameraTemperingArray = this.cameraTemperingArray.filter((item) => {
         const itemDate = new Date(item.date); // Replace 'date' with the actual date property in your data
         return itemDate >= this.startDate && itemDate <= this.endDate;
       });
@@ -112,17 +112,37 @@ export class CameraTemperingComponent {
       .getLatestEventByEvent(event, this.currentPage, this.itemsPerPage)
       .subscribe((wrongSideData: any) => {
         console.log(wrongSideData, "Wrongside Data");
-        this.wrongSideArray = wrongSideData.latestEvents;
+        this.cameraTemperingArray = wrongSideData.latestEvents;
         this.Wrongside = wrongSideData;
         this.totalItems = wrongSideData.totalItems;
       });
   }
-
+  keyWord:string='';
+  formattedDate:any
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1;
     sessionStorage.setItem('currentPage',this.currentPage)
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event = "Camera_Tampering";
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.cameraTemperingArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
 
   onClickCanclevideo() {
@@ -144,13 +164,18 @@ export class CameraTemperingComponent {
   searchByDate(data: any) {
     console.log(data, "calender Date");
     const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
-
-    console.log(formattedDate, "Formatted Date");
+    let event = "Camera_Tampering";
+    console.log(this.formattedDate, "Formatted Date");
     this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
+      .getDataBySearchonDate1(
+        event,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
       .subscribe((data: any) => {
         console.log("formate data", data);
-        this.wrongSideArray = data.latestEvents;
+        this.cameraTemperingArray = data.latestEvents;
         this.totalItems = data.totalItems;
       });
   }

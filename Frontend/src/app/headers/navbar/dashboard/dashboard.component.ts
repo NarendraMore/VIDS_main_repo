@@ -9,7 +9,7 @@ import { Subject, debounceTime, interval } from "rxjs";
 import { environment } from "src/environments/environment";
 import { EventType } from "@angular/router";
 import { Calendar } from "primeng/calendar";
-import { DatePipe } from "@angular/common";
+import { DatePipe, formatDate } from "@angular/common";
 
 export interface camerastatus {
   ip: string;
@@ -21,12 +21,11 @@ export interface Event {
   eventName: any;
 }
 
-
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.css"],
-  providers: [ConfirmationService, MessageService,DatePipe],
+  providers: [ConfirmationService, MessageService, DatePipe],
 })
 export class DashboardComponent implements OnInit {
   @ViewChild("map", { static: true }) private mapContainer!: ElementRef;
@@ -54,7 +53,7 @@ export class DashboardComponent implements OnInit {
   latestEvents: any[] = [];
   totalItems: number = 0;
   first: number = 0;
-  currentPage: number = 1;
+  currentPage: any = 1;
   itemsPerPage: number = 10;
   eventData: any[] = [];
   locationData: any[] = [];
@@ -65,7 +64,7 @@ export class DashboardComponent implements OnInit {
   bookmark: any[] = [];
   staticStic: any[] = [];
   isBookmarked: boolean = false;
-  dateForSearch:any
+  dateForSearch: any;
   constructor(
     private eventservice: EventService,
     private messageService: MessageService,
@@ -87,27 +86,26 @@ export class DashboardComponent implements OnInit {
       { eventName: "Wrong_Side" },
     ];
   }
-  keyWord:string='';
+  keyWord: string = "";
   private inputChanged = new Subject<string>();
   ngOnInit(): void {
     // this.initializeMap();
     this.loadLatestEvents();
     this.eventservice.getallBookmark().subscribe((bookmarkData: any) => {
       this.bookmark = bookmarkData.slice().reverse();
-      console.log('bookmarkData all data', this.bookmark);
+      console.log("bookmarkData all data", this.bookmark);
+    });
 
-    })
-
-
-    this.eventservice.getallStaticcevent().subscribe((staticsticeventData: any) => {
-      console.log("staticsticevent Data", staticsticeventData);
-      this.staticStic = staticsticeventData
-
-    })
+    this.eventservice
+      .getallStaticcevent()
+      .subscribe((staticsticeventData: any) => {
+        console.log("staticsticevent Data", staticsticeventData);
+        this.staticStic = staticsticeventData;
+      });
 
     this.inputChanged.pipe(debounceTime(300)).subscribe(() => {
       // Call your function here, e.g., this.searchKeyword();
-      console.log('Input value changed:', this.keyWord);
+      console.log("Input value changed:", this.keyWord);
       this.searchKeyword();
     });
 
@@ -131,19 +129,12 @@ export class DashboardComponent implements OnInit {
     // });
   }
 
-  
   getBookmarkDatabyId(id: any) {
-
     // this.eventservice.getBookmarkdataByid(id).subscribe((bookmarkdatabyId:any)=>{
     //   console.log('bookmarkdatabyId',bookmarkdatabyId);
     //   this.bookmark = bookmarkdatabyId
-
     // })
   }
-
-
-
-
 
   filterDataByEvent(data: any) {
     console.log(data, "after click dropdown");
@@ -242,13 +233,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-
-  //bookmark code 
-
+  //bookmark code
 
   onclickBookmark(id: any, event: any) {
     // console.log('event id :...',id);
-     this.isBookmarked = !this.isBookmarked;
+    this.isBookmarked = !this.isBookmarked;
 
     const bookmark = {
       eventId: id,
@@ -259,23 +248,25 @@ export class DashboardComponent implements OnInit {
       location: event.location,
       imagepath: event.imagepath,
       videopath: event.videopath,
-      assignBy: 'null',
-      note: 'null',
-      imageUrl: event.imageUrl
+      assignBy: "null",
+      note: "null",
+      imageUrl: event.imageUrl,
     };
-    this.eventservice.addBookmark(bookmark, id).subscribe((bookmarkdata: any) => {
-      console.log('bookmarkdata return response', bookmarkdata);
-      this.ngOnInit();
-    },
-    (error:HttpErrorResponse)=>{
-      // console.log(error);
-      alert(error.error.error)
-      // if(error.status===400){
-      //   alert("This event is already bookmarked")
-      // }
-      console.log(error);
-    })
-   
+    this.eventservice.addBookmark(bookmark, id).subscribe(
+      (bookmarkdata: any) => {
+        console.log("bookmarkdata return response", bookmarkdata);
+        this.ngOnInit();
+      },
+      (error: HttpErrorResponse) => {
+        // console.log(error);
+        alert(error.error.error);
+        // if(error.status===400){
+        //   alert("This event is already bookmarked")
+        // }
+        console.log(error);
+      }
+    );
+
     // window.location.reload();
     // this.ngOnInit();
     // this.getBookmarkDatabyId(id)
@@ -290,7 +281,7 @@ export class DashboardComponent implements OnInit {
     this.eventservice.gettruestatus(eventId, status).subscribe((data: any) => {
       const trueValue = data.status;
 
-      this.ngOnInit();
+      this.loadLatestEvents();
     });
   }
   // disableFalseButton(id:any){
@@ -329,31 +320,37 @@ export class DashboardComponent implements OnInit {
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
-    const eventType='All'
-    if(this.keyWord===''){
-     this.loadLatestEvents();
+    sessionStorage.setItem("currentPage", this.currentPage);
+    const eventType = "All";
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      this.eventservice
+        .getDataBySearchonDate1(
+          this.keyWord,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.latestEvents = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
     }
-    else{
-
-      this.eventservice.getDataBySearch(this.keyWord,this.currentPage, this.itemsPerPage,eventType).subscribe((data:any)=>{
-
-        console.log(data);
-        this.latestEvents = data.latestEvents;
-        this.totalItems = data.totalItems;
-        
-       });
-    }
-   
   }
 
   loadLatestEvents(): void {
     console.log("Loading data for page:", this.currentPage);
     this.eventservice
-      .getLatestEvents(this.currentPage, this.itemsPerPage)
+      .getLatestEvents(sessionStorage.getItem("currentPage"), this.itemsPerPage)
       .subscribe(
         (response: any) => {
           this.latestEvents = response.latestEvents;
-       
+
           this.totalItems = response.totalItems;
           console.log(this.latestEvents, this.totalItems, "latest event");
           for (let i = 0; i < this.latestEvents.length; i++) {
@@ -390,38 +387,46 @@ export class DashboardComponent implements OnInit {
         }
       );
   }
- 
+
   onInputChange(event: any) {
-    console.log(event.target.value,"event value");
-    this.keyWord=event.target.value
+    console.log(event.target.value, "event value");
+    this.keyWord = event.target.value;
     // Trigger the debounced input change
     this.inputChanged.next(this.keyWord);
   }
-  searchKeyword(){
-    const eventType='All'
+  searchKeyword() {
+    const eventType = "All";
 
-   this.eventservice.getDataBySearch(this.keyWord,this.currentPage, this.itemsPerPage,eventType).subscribe((data:any)=>{
-
-    console.log(data);
-    this.latestEvents = data.latestEvents;
-    this.totalItems = data.totalItems;
-    
-   })
-if(this.keyWord==='')
-   this.loadLatestEvents();
+    this.eventservice
+      .getDataBySearchonDate1(
+        this.keyWord,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
+      .subscribe((data: any) => {
+        console.log(data);
+        this.latestEvents = data.latestEvents;
+        this.totalItems = data.totalItems;
+      });
+    if (this.keyWord === "") this.loadLatestEvents();
   }
+  formattedDate: any;
+  searchByDate(data: any) {
+    console.log(data, "calender Date");
+    this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
 
-  searchByDate(data:any){
-console.log(data,"calender Date");
-const formattedDate = this.datePipe.transform(data, 'YYYY-MM-dd');
-    
-// console.log(formattedDate, "Formatted Date");
-this.eventservice.getDataBySearchonDate(formattedDate,this.currentPage, this.itemsPerPage).subscribe((data:any)=>{
-
-  console.log('formate data',data);
-  this.latestEvents = data.latestEvents;
-  this.totalItems = data.totalItems;
-  
- })
+    // console.log(formattedDate, "Formatted Date");
+    this.eventservice
+      .getDataBySearchonDate(
+        this.formattedDate,
+        this.currentPage,
+        this.itemsPerPage
+      )
+      .subscribe((data: any) => {
+        console.log("formate data", data);
+        this.latestEvents = data.latestEvents;
+        this.totalItems = data.totalItems;
+      });
   }
 }

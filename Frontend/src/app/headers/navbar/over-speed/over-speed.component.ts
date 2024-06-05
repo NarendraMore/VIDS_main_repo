@@ -9,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EventService } from 'src/app/service/event.service';
 import { environment } from 'src/environments/environment';
 
-export interface wrongside {
+export interface overSpeedside {
   vehiclecount: string;
   vehicletype: string;
   date: string;
@@ -35,7 +35,7 @@ export class OverSpeedComponent {
   overSpeedgPhoto: boolean = false;
   overSpeedzoomPhoto: boolean = false;
   overspeedId: any;
-  wrongSideArray: wrongside[] = [];
+  overSpeedArray: overSpeedside[] = [];
   overSpeedId: any;
   overSpeedIds: any;
   overSpeedvideoIds: any;
@@ -57,7 +57,7 @@ export class OverSpeedComponent {
   applyFilter() {
     // Filter your data based on the selected date range
     if (this.startDate && this.endDate) {
-      this.wrongSideArray = this.wrongSideArray.filter((item) => {
+      this.overSpeedArray = this.overSpeedArray.filter((item) => {
         const itemDate = new Date(item.date); // Replace 'date' with the actual date property in your data
         return itemDate >= this.startDate && itemDate <= this.endDate;
       });
@@ -110,28 +110,54 @@ export class OverSpeedComponent {
       .getLatestEventByEvent(event, this.currentPage, this.itemsPerPage)
       .subscribe((overSpeed: any) => {
         console.log(overSpeed, 'over_speed Data');
-        this.wrongSideArray = overSpeed.latestEvents;
+        this.overSpeedArray = overSpeed.latestEvents;
         this.overspeedId = overSpeed;
         this.totalItems = overSpeed.totalItems;
       });
   }
+  keyWord:string ='';
+  formattedDate:any
   onPageChange(event: any): void {
     console.log('onPageChange triggered:', event);
     this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
     sessionStorage.setItem('currentPage',this.currentPage)
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event = "Over_Speed";
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.overSpeedArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
 
   searchByDate(data: any) {
     console.log(data, "calender Date");
-    const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
-
-    console.log(formattedDate, "Formatted Date");
+    this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
+    let event = "Over_Speed";
+    console.log(this.formattedDate, "Formatted Date");
     this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
+      .getDataBySearchonDate1(
+        event,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
       .subscribe((data: any) => {
         console.log("formate data", data);
-        this.wrongSideArray = data.latestEvents;
+        this.overSpeedArray = data.latestEvents;
         this.totalItems = data.totalItems;
       });
   }

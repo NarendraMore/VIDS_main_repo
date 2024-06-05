@@ -1,9 +1,9 @@
 import { DatePipe } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
-import { ElementRef, ViewChild } from '@angular/core';
+import { ElementRef, ViewChild } from "@angular/core";
 import { ChangeDetectorRef } from "@angular/core";
 
-import { Renderer2 } from '@angular/core';
+import { Renderer2 } from "@angular/core";
 import { Component } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { EventService } from "src/app/service/event.service";
@@ -25,10 +25,12 @@ export interface cameraNames {
   selector: "app-animal-detection",
   templateUrl: "./animal-detection.component.html",
   styleUrls: ["./animal-detection.component.css"],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class AnimalDetectionComponent {
-  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef | undefined;
+  @ViewChild("videoPlayer", { static: false }) videoPlayer!:
+    | ElementRef
+    | undefined;
   animalDetection: any;
   animaldetectionArray: animaldetection[] = [];
   animalVideo: boolean = false;
@@ -52,7 +54,7 @@ export class AnimalDetectionComponent {
   currentPage: any = 1;
   itemsPerPage: any = 10;
   today: any;
-  dateForSearch:any
+  dateForSearch: any;
   constructor(
     private evenservice: EventService,
     private eventservice: EventService,
@@ -105,13 +107,31 @@ export class AnimalDetectionComponent {
         this.totalItems = animalData.totalItems;
       });
   }
-
+  keyWord: string = "";
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1;
     console.log(this.currentPage, "current page value");
-    // PrimeNG Paginator uses 0-based indexing
-    this.loadLatestEvents();
+    if (
+      (this.keyWord == "" || this.keyWord == undefined) &&
+      this.dateForSearch == null
+    ) {
+      this.loadLatestEvents();
+    } else {
+      let event = "Animal Detection";
+      this.eventservice
+        .getDataBySearchonDate1(
+          event,
+          this.formattedDate,
+          sessionStorage.getItem("currentPage"),
+          this.itemsPerPage
+        )
+        .subscribe((data: any) => {
+          console.log(data);
+          this.animaldetectionArray = data.latestEvents;
+          this.totalItems = data.totalItems;
+        });
+    }
   }
 
   onClickCanclevideo() {
@@ -122,25 +142,29 @@ export class AnimalDetectionComponent {
     this.animalVideo = true;
     this.animalvideoId = id;
     this.animalvideoUrl = `${environment.url}/playVideo/${id}`;
-    this.evenservice.playVideoApi(this.animalvideoId).subscribe((data: any) => {
-      console.log(data, 'wrong side id wise data');
-    },
-    (error: HttpErrorResponse) => {
-      console.error('Error:', error);
-      const url = error.url;
-      // console.log('URL:', url);
-      this.animalvideoUrl = url
-      console.log(this.animalvideoUrl, 'url');
-
-    })
+    this.evenservice.playVideoApi(this.animalvideoId).subscribe(
+      (data: any) => {
+        console.log(data, "wrong side id wise data");
+      },
+      (error: HttpErrorResponse) => {
+        console.error("Error:", error);
+        const url = error.url;
+        // console.log('URL:', url);
+        this.animalvideoUrl = url;
+        console.log(this.animalvideoUrl, "url");
+      }
+    );
     this.reloadVideo();
   }
   reloadVideo(): void {
     if (this.videoPlayer && this.videoPlayer.nativeElement) {
-      this.renderer.setAttribute(this.videoPlayer.nativeElement, 'src', this.wrongSideVideoUrl);
+      this.renderer.setAttribute(
+        this.videoPlayer.nativeElement,
+        "src",
+        this.wrongSideVideoUrl
+      );
       this.videoPlayer.nativeElement.load();
     }
-    
   }
   onClickCanclePhoto() {
     this.ngOnInit();
@@ -178,14 +202,20 @@ export class AnimalDetectionComponent {
     this.eventValue = event.value;
     console.log(this.eventValue, "event value");
   }
-
+  formattedDate: any;
   searchByDate(data: any) {
     console.log(data, "calender Date");
-    const formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
+    this.formattedDate = this.datePipe.transform(data, "YYYY-MM-dd");
 
-    console.log(formattedDate, "Formatted Date");
+    let event = "Animal Detection";
+    console.log(this.formattedDate, "Formatted Date");
     this.eventservice
-      .getDataBySearchonDate(formattedDate, this.currentPage, this.itemsPerPage)
+      .getDataBySearchonDate1(
+        event,
+        this.formattedDate,
+        sessionStorage.getItem("currentPage"),
+        this.itemsPerPage
+      )
       .subscribe((data: any) => {
         console.log("formate data", data);
         this.animaldetectionArray = data.latestEvents;

@@ -209,9 +209,25 @@ export class EventService {
       limit:limit
     }
     console.log(data,"data in service");
-    
+ 
     return this.http.get(
       `${environment.url}/search?page=${page}&limit=${limit}&date=${searchValue}`
+    );
+  }
+  getDataBySearchonDate1(searchValue:any,date:any,page:any,limit:any) {
+    console.log('searchValue',searchValue);
+   
+    const data = {
+      searchValues:searchValue,
+      page:page,
+      limit:limit
+    }
+    console.log(data,"data in service");
+    if(date== null){
+      date =''
+    }
+    return this.http.get(
+      `${environment.url}/search?page=${page}&limit=${limit}&date=${date}&searchValue=${searchValue}`
     );
   }
   // getLatestEventByEvent(event: any, page: any, limit: any) {

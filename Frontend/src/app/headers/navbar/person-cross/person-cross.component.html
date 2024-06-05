@@ -110,16 +110,16 @@
       </ng-template>
     </p-table>
     <p-paginator
-      (onPageChange)="onPageChange($event)"
-      [first]="(currentPage - 1) * itemsPerPage"
-      [rows]="itemsPerPage"
-      [totalRecords]="totalItems"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {{ first }} to {{ itemsPerPage }} of {{
-        totalItems
-      }} entries"
-      class="customPaginator"
-    ></p-paginator>
+    (onPageChange)="onPageChange($event)"
+    [first]="(currentPage - 1) * itemsPerPage"
+    [rows]="itemsPerPage"
+    [totalRecords]="totalItems"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{
+      (currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems) }} of {{ totalItems }} entries"
+    class="customPaginator"
+  ></p-paginator>
+  
   </div>
 </div>
 
