@@ -2,36 +2,16 @@
   <div>
     <b style="font-size: 22px">WrongSide Detection</b>
     <div style="float: right; display: flex">
-      <p-calendar
-        placeholder="Select Date"
-        [showIcon]="true"
-        (onClear)="loadLatestEvents()"
-        [showClear]="true"
-        inputId="icon"
-        styleClass="searchCalender"
-        [(ngModel)]="dateForSearch"
-        (onSelect)="searchByDate(dateForSearch)"
-      ></p-calendar>
+      <p-calendar placeholder="Select Date" [showIcon]="true" (onClear)="loadLatestEvents()" [showClear]="true"
+        inputId="icon" styleClass="searchCalender" [(ngModel)]="dateForSearch"
+        (onSelect)="searchByDate(dateForSearch)"></p-calendar>
       <span>
-        <button
-          (click)="onclickDownloadReport()"
-          class="DownloadBtn p-button-lg"
-          pButton
-          pRipple
-          icon="pi pi-download"
-          pTooltip="Download"
-        ></button> </span
-      >&nbsp;
+        <button (click)="onclickDownloadReport()" class="DownloadBtn p-button-lg" pButton pRipple icon="pi pi-download"
+          pTooltip="Download"></button> </span>&nbsp;
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input
-          pInputText
-          type="text"
-          (input)="onInputChange($event)"
-          placeholder="Search"
-          class="p-inputtext-sm searchInputWrong"
-          [(ngModel)]="keyWord"
-        />
+        <input pInputText type="text" (input)="onInputChange($event)" placeholder="Search"
+          class="p-inputtext-sm searchInputWrong" [(ngModel)]="keyWord" />
       </span>
     </div>
   </div>
@@ -40,21 +20,15 @@
     <p-calendar [(ngModel)]="endDate" dateFormat="yy-mm-dd"></p-calendar>
     <button (click)="applyFilter()">Apply Filter</button> -->
   <div class="WrongsideTable">
-    <p-table
-      [globalFilterFields]="[
+    <p-table [globalFilterFields]="[
         'vehiclecount',
         'vehicletype',
         'date',
         'time',
         'cameratype',
         'location'
-      ]"
-      #dt
-      [value]="wrongSideArray"
-      [rows]="itemsPerPage"
-      [paginator]="false"
-      styleClass="p-datatable-sm wrongTable customPaginator"
-    >
+      ]" #dt [value]="wrongSideArray" [rows]="itemsPerPage" [paginator]="false"
+      styleClass="p-datatable-sm wrongTable customPaginator">
       <ng-template pTemplate="header" let-columns>
         <tr class="tableHeader">
           <th>Sr.No</th>
@@ -70,12 +44,7 @@
           <th style="width: 15%">Action</th>
         </tr>
       </ng-template>
-      <ng-template
-        pTemplate="body"
-        let-rowData
-        let-columns="columns"
-        let-rowIndex="rowIndex"
-      >
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
         <tr>
           <td>{{ rowIndex + 1 }}</td>
           <!-- <td>{{ rowData.vehicletype }}</td> -->
@@ -84,53 +53,26 @@
           <td>{{ rowData.cameratype }}</td>
           <td>{{ rowData.location }}</td>
           <td>
-            <button
-              pTooltip="Video"
-              style="height: 35px; width: 35px; background-color: #6366f1"
-              (click)="onClickShowwrongsidevideo(rowData._id, rowData.name)"
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-caret-right"
-              class="p-button-rounded"
-            ></button>
+            <button pTooltip="Video" style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickShowwrongsidevideo(rowData._id, rowData.name)" pButton pRipple type="button"
+              icon="pi pi-caret-right" class="p-button-rounded"></button>
             &nbsp;
-            <button
-              pTooltip="Image"
-              tooltipPosition="left"
-              style="height: 35px; width: 35px; background-color: #6366f1"
-              (click)="onClickShowphoto(rowData._id)"
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-image"
-              class="p-button-rounded"
-            ></button>
+            <button pTooltip="Image" tooltipPosition="left" style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickShowphoto(rowData._id)" pButton pRipple type="button" icon="pi pi-image"
+              class="p-button-rounded"></button>
           </td>
         </tr>
       </ng-template>
     </p-table>
-    <p-paginator
-      (onPageChange)="onPageChange($event)"
-      [first]="(currentPage - 1) * itemsPerPage"
-      [rows]="itemsPerPage"
-      [totalRecords]="totalItems"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {{ first }} to {{ itemsPerPage }} of {{
-        totalItems
-      }} entries"
-      class="customPaginator"
-    ></p-paginator>
+    <p-paginator (onPageChange)="onPageChange($event)" [first]="(currentPage - 1) * itemsPerPage" [rows]="itemsPerPage"
+      [totalRecords]="totalItems" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{
+      (currentPage - 1) * itemsPerPage + itemsPerPage > totalItems ? totalItems : (currentPage - 1) * itemsPerPage + itemsPerPage
+    }} of {{ totalItems }} entries" class="customPaginator"></p-paginator>
   </div>
 </div>
 
-<p-dialog
-  (onHide)="onClickCanclevideo()"
-  [modal]="true"
-  header="Wrong Side Detection Video"
-  [(visible)]="wrongSideVideo"
-  [style]="{ width: '80vh', height: 'auto' }"
->
+<p-dialog (onHide)="onClickCanclevideo()" [modal]="true" header="Wrong Side Detection Video"
+  [(visible)]="wrongSideVideo" [style]="{ width: '80vh', height: 'auto' }">
   <div class="" style="display: flex">
     <video #videoPlayer width="470" height="300" controls autoplay>
       <source [src]="wrongSideVideoUrl" type="video/mp4" />
@@ -151,54 +93,27 @@
 
     </div>
 </p-dialog> -->
-<p-dialog
-  [modal]="true"
-  header="Wrong Side Detection Photo"
-  [(visible)]="wrongSidePhoto"
-  [style]="{ width: '90%', height: 'auto' }"
->
+<p-dialog [modal]="true" header="Wrong Side Detection Photo" [(visible)]="wrongSidePhoto"
+  [style]="{ width: '90%', height: 'auto' }">
   <div class="">
     <div style="">
       <i (click)="zoomInImage()" style="cursor: pointer">
-        <img
-          class=""
-          style="height: 70%; width: 90%"
-          [src]="wrongSideImageUrl"
-          alt=""
-        />
+        <img class="" style="height: 70%; width: 90%" [src]="wrongSideImageUrl" alt="" />
       </i>
     </div>
   </div>
 </p-dialog>
 
-<p-dialog
-  [modal]="true"
-  (onHide)="onClickCanclePhoto()"
-  header="Wrong Side Detection Photo"
-  [(visible)]="wrongsidezoomPhoto"
-  [style]="{ width: '90%', height: 'auto' }"
->
+<p-dialog [modal]="true" (onHide)="onClickCanclePhoto()" header="Wrong Side Detection Photo"
+  [(visible)]="wrongsidezoomPhoto" [style]="{ width: '90%', height: 'auto' }">
   <div class="">
     <div style="">
-      <img
-        id="zoomedImage"
-        class=""
-        style="width: 90%; height: auto"
-        [src]="wrongSideImageUrl"
-        alt=""
-      />
+      <img id="zoomedImage" class="" style="width: 90%; height: auto" [src]="wrongSideImageUrl" alt="" />
     </div>
   </div>
 </p-dialog>
-<p-dialog
-  [modal]="true"
-  header="Download Wrong-Side Report"
-  [closable]="true"
-  [(visible)]="downloadReport"
-  [style]="{ width: '70%', height: '55vh' }"
-  styleClass="wrongSideStatus"
-  (onHide)="onClickCancel()"
->
+<p-dialog [modal]="true" header="Download Wrong-Side Report" [closable]="true" [(visible)]="downloadReport"
+  [style]="{ width: '70%', height: '55vh' }" styleClass="wrongSideStatus" (onHide)="onClickCancel()">
   <form action="" [formGroup]="downloadForm">
     <div class="grid">
       <!-- <div class="col-4">
@@ -220,48 +135,23 @@
       <div class="col-4">
         <div class="grid-content">
           <label for="">Start Date <span style="color: red">*</span></label>
-          <input
-            type="date"
-            class="inputDateStyle"
-            formControlName="startDate"
-            appendTo="body"
-            dateFormat="yy-mm-dd"
-            required
-            inputId="dateformat"
-            (change)="onDateChange1($event)"
-          />
+          <input type="date" class="inputDateStyle" formControlName="startDate" appendTo="body" dateFormat="yy-mm-dd"
+            required inputId="dateformat" (change)="onDateChange1($event)" />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">End Date <span style="color: red">*</span></label>
-          <input
-            type="date"
-            class="inputDateStyle"
-            formControlName="endDate"
-            appendTo="body"
-            dateFormat="yy-mm-dd"
-            required
-            [max]="today"
-            inputId="dateformat1"
-            (change)="onDateChange($event)"
-          />
+          <input type="date" class="inputDateStyle" formControlName="endDate" appendTo="body" dateFormat="yy-mm-dd"
+            required [max]="today" inputId="dateformat1" (change)="onDateChange($event)" />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">Choose Camera <span style="color: red">*</span> </label>
-          <p-dropdown
-            class="inputDropdownStyle"
-            formControlName="cameratype"
-            (onChange)="onclickcameraEvent($event)"
-            optionLabel="cameraTypes"
-            [options]="cameraType"
-            optionValue="cameraTypes"
-            appendTo="body"
-            styleClass="dropdown1"
-            placeholder="Select"
-          ></p-dropdown>
+          <p-dropdown class="inputDropdownStyle" formControlName="cameratype" (onChange)="onclickcameraEvent($event)"
+            optionLabel="cameraTypes" [options]="cameraType" optionValue="cameraTypes" appendTo="body"
+            styleClass="dropdown1" placeholder="Select"></p-dropdown>
         </div>
       </div>
     </div>
@@ -269,71 +159,33 @@
       <div class="col-4">
         <div class="grid-content">
           <label for="">Start Time <span style="color: red">*</span></label>
-          <input
-            class="inputStyle"
-            formControlName="startTime"
-            ngClass="formInput"
-            type="time"
-            pInputText
-            placeholder="Enter"
-            required
-          />
+          <input class="inputStyle" formControlName="startTime" ngClass="formInput" type="time" pInputText
+            placeholder="Enter" required />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">End Time <span style="color: red">*</span></label>
-          <input
-            class="inputStyle"
-            formControlName="endTime"
-            ngClass="formInput"
-            type="time"
-            pInputText
-            placeholder="Enter"
-            required
-          />
+          <input class="inputStyle" formControlName="endTime" ngClass="formInput" type="time" pInputText
+            placeholder="Enter" required />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">Choose Format <span style="color: red">*</span></label>
-          <p-dropdown
-            (onChange)="onDropdownChange($event)"
-            class="inputDropdownStyle"
-            formControlName="formate"
-            optionLabel="formates"
-            [options]="formate"
-            optionValue="formates"
-            appendTo="body"
-            styleClass="dropdown"
-            placeholder="Select"
-          ></p-dropdown>
+          <p-dropdown (onChange)="onDropdownChange($event)" class="inputDropdownStyle" formControlName="formate"
+            optionLabel="formates" [options]="formate" optionValue="formates" appendTo="body" styleClass="dropdown"
+            placeholder="Select"></p-dropdown>
         </div>
       </div>
     </div>
     <div class="grid"></div>
 
     <div style="float: right; margin-top: 3%; display: flex">
-      <button
-        (click)="onClickCancel()"
-        class="cancelBtn p-button-outlined"
-        pButton
-        label="Cancel"
-        type="button"
-        pRipple
-        icon="pi pi-times-circle"
-      ></button
-      >&nbsp;
-      <button
-        (click)="onClickDownloadReport()"
-        [disabled]="!downloadForm.valid"
-        class="reportBtn p-button-outlined"
-        pButton
-        label="download"
-        type="button"
-        pRipple
-        icon="pi pi-download"
-      ></button>
+      <button (click)="onClickCancel()" class="cancelBtn p-button-outlined" pButton label="Cancel" type="button" pRipple
+        icon="pi pi-times-circle"></button>&nbsp;
+      <button (click)="onClickDownloadReport()" [disabled]="!downloadForm.valid" class="reportBtn p-button-outlined"
+        pButton label="download" type="button" pRipple icon="pi pi-download"></button>
     </div>
   </form>
 </p-dialog>

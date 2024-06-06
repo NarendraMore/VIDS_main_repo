@@ -88,6 +88,10 @@ export class CameraTemperingComponent {
   }
 
   ngOnInit() {
+    this.currentPage = 1;
+    sessionStorage.setItem("currentPage", this.currentPage);
+    const savedPage = sessionStorage.getItem("currentPage");
+    this.currentPage = savedPage ? parseInt(savedPage, 10) : 1;
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
@@ -119,22 +123,44 @@ export class CameraTemperingComponent {
   }
   keyWord:string='';
   formattedDate:any
+  // onPageChange(event: any): void {
+  //   console.log("onPageChange triggered:", event);
+  //   this.currentPage = event.page + 1;
+  //   sessionStorage.setItem('currentPage',this.currentPage)
+  //   if (
+  //     (this.keyWord == "" || this.keyWord == undefined) &&
+  //     this.dateForSearch == null
+  //   ) {
+  //     this.loadLatestEvents();
+  //   } else {
+  //     let event = "Camera_Tampering";
+  //     this.eventservice
+  //       .getDataBySearchonDate1(
+  //         event,
+  //         this.formattedDate,
+  //         sessionStorage.getItem("currentPage"),
+  //         this.itemsPerPage
+  //       )
+  //       .subscribe((data: any) => {
+  //         console.log(data);
+  //         this.cameraTemperingArray = data.latestEvents;
+  //         this.totalItems = data.totalItems;
+  //       });
+  //   }
+  // }
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
-    this.currentPage = event.page + 1;
-    sessionStorage.setItem('currentPage',this.currentPage)
-    if (
-      (this.keyWord == "" || this.keyWord == undefined) &&
-      this.dateForSearch == null
-    ) {
+    this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
+    sessionStorage.setItem("currentPage", this.currentPage.toString());
+    
+    if (!this.keyWord && !this.dateForSearch) {
       this.loadLatestEvents();
     } else {
-      let event = "Camera_Tampering";
       this.eventservice
         .getDataBySearchonDate1(
-          event,
+          this.keyWord,
           this.formattedDate,
-          sessionStorage.getItem("currentPage"),
+          this.currentPage,
           this.itemsPerPage
         )
         .subscribe((data: any) => {
@@ -144,6 +170,7 @@ export class CameraTemperingComponent {
         });
     }
   }
+  
 
   onClickCanclevideo() {
     this.wrongSideVideo = false;

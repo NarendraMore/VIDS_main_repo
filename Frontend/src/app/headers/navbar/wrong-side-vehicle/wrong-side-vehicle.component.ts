@@ -94,6 +94,10 @@ export class WrongSideVehicleComponent {
   keyWord: string = '';
   private inputChanged = new Subject<string>();
   ngOnInit() {
+    const savedPage = sessionStorage.getItem("currentPage");
+    this.currentPage = savedPage ? parseInt(savedPage, 10) : 1;
+    this.currentPage = 1;
+    sessionStorage.setItem("currentPage", this.currentPage);
     this.loadLatestEvents();
     this.downloadForm = new FormGroup({
       event: new FormControl("Wrong_Side", [Validators.required]),
@@ -132,28 +136,26 @@ export class WrongSideVehicleComponent {
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
-    sessionStorage.setItem("currentPage", this.currentPage);
-    if (
-      (this.keyWord == "" || this.keyWord == undefined) &&
-      this.dateForSearch == null
-    ) {
+    sessionStorage.setItem("currentPage", this.currentPage.toString());
+    
+    if (!this.keyWord && !this.dateForSearch) {
       this.loadLatestEvents();
     } else {
-      let event ='Wrong_Side'
       this.eventservice
         .getDataBySearchonDate1(
-          event,
+          this.keyWord,
           this.formattedDate,
-          sessionStorage.getItem("currentPage"),
+          this.currentPage,
           this.itemsPerPage
         )
         .subscribe((data: any) => {
           console.log(data);
-         this.wrongSideArray = data.latestEvents;
+          this.wrongSideArray = data.latestEvents;
           this.totalItems = data.totalItems;
         });
     }
   }
+  
   onClickCanclevideo() {
     // this.ngOnInit();
     this.wrongSideVideoUrl = "";

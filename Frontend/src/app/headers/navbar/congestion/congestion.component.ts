@@ -88,6 +88,10 @@ export class CongestionComponent {
   }
 
   ngOnInit() {
+    this.currentPage = 1;
+    sessionStorage.setItem("currentPage", this.currentPage);
+    const savedPage = sessionStorage.getItem("currentPage");
+    this.currentPage = savedPage ? parseInt(savedPage, 10) : 1;
     this.loadLatestEvents();
     this.downloadForm = new FormGroup({
       event: new FormControl('Congestion_Detected', [Validators.required]),
@@ -117,22 +121,44 @@ export class CongestionComponent {
       });
   }
 keyWord:string= '';
+  // onPageChange(event: any): void {
+  //   console.log('onPageChange triggered:', event);
+  //   this.currentPage = event.page + 1; 
+  //   sessionStorage.setItem('currentPage',this.currentPage)
+  //   if (
+  //     (this.keyWord == "" || this.keyWord == undefined) &&
+  //     this.dateForSearch == null
+  //   ) {
+  //     this.loadLatestEvents();
+  //   } else {
+  //     let event = "Congestion_Detected";
+  //     this.eventservice
+  //       .getDataBySearchonDate1(
+  //         event,
+  //         this.formattedDate,
+  //         sessionStorage.getItem("currentPage"),
+  //         this.itemsPerPage
+  //       )
+  //       .subscribe((data: any) => {
+  //         console.log(data);
+  //         this.congestionArray = data.latestEvents;
+  //         this.totalItems = data.totalItems;
+  //       });
+  //   }
+  // }
   onPageChange(event: any): void {
-    console.log('onPageChange triggered:', event);
-    this.currentPage = event.page + 1; 
-    sessionStorage.setItem('currentPage',this.currentPage)
-    if (
-      (this.keyWord == "" || this.keyWord == undefined) &&
-      this.dateForSearch == null
-    ) {
+    console.log("onPageChange triggered:", event);
+    this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
+    sessionStorage.setItem("currentPage", this.currentPage.toString());
+    
+    if (!this.keyWord && !this.dateForSearch) {
       this.loadLatestEvents();
     } else {
-      let event = "Congestion_Detected";
       this.eventservice
         .getDataBySearchonDate1(
-          event,
+          this.keyWord,
           this.formattedDate,
-          sessionStorage.getItem("currentPage"),
+          this.currentPage,
           this.itemsPerPage
         )
         .subscribe((data: any) => {
@@ -142,7 +168,7 @@ keyWord:string= '';
         });
     }
   }
-
+  
   formattedDate:any
   searchByDate(data: any) {
     console.log(data, "calender Date");

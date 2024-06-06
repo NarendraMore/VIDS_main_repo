@@ -89,6 +89,10 @@ export class DashboardComponent implements OnInit {
   keyWord: string = "";
   private inputChanged = new Subject<string>();
   ngOnInit(): void {
+    this.currentPage = 1;
+    sessionStorage.setItem("currentPage", this.currentPage);
+    const savedPage = sessionStorage.getItem("currentPage");
+    this.currentPage = savedPage ? parseInt(savedPage, 10) : 1;
     // this.initializeMap();
     this.loadLatestEvents();
     this.eventservice.getallBookmark().subscribe((bookmarkData: any) => {
@@ -317,22 +321,44 @@ export class DashboardComponent implements OnInit {
     this.googleMap = true;
   }
 
+  // onPageChange(event: any): void {
+  //   console.log("onPageChange triggered:", event);
+  //   this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
+  //   sessionStorage.setItem("currentPage", this.currentPage);
+  //   const eventType = "All";
+  //   if (
+  //     (this.keyWord == "" || this.keyWord == undefined) &&
+  //     this.dateForSearch == null
+  //   ) {
+  //     this.loadLatestEvents();
+  //   } else {
+  //     this.eventservice
+  //       .getDataBySearchonDate1(
+  //         this.keyWord,
+  //         this.formattedDate,
+  //         sessionStorage.getItem("currentPage"),
+  //         this.itemsPerPage
+  //       )
+  //       .subscribe((data: any) => {
+  //         console.log(data);
+  //         this.latestEvents = data.latestEvents;
+  //         this.totalItems = data.totalItems;
+  //       });
+  //   }
+  // }
   onPageChange(event: any): void {
     console.log("onPageChange triggered:", event);
     this.currentPage = event.page + 1; // PrimeNG Paginator uses 0-based indexing
-    sessionStorage.setItem("currentPage", this.currentPage);
-    const eventType = "All";
-    if (
-      (this.keyWord == "" || this.keyWord == undefined) &&
-      this.dateForSearch == null
-    ) {
+    sessionStorage.setItem("currentPage", this.currentPage.toString());
+    
+    if (!this.keyWord && !this.dateForSearch) {
       this.loadLatestEvents();
     } else {
       this.eventservice
         .getDataBySearchonDate1(
           this.keyWord,
           this.formattedDate,
-          sessionStorage.getItem("currentPage"),
+          this.currentPage,
           this.itemsPerPage
         )
         .subscribe((data: any) => {
@@ -342,6 +368,7 @@ export class DashboardComponent implements OnInit {
         });
     }
   }
+  
 
   loadLatestEvents(): void {
     console.log("Loading data for page:", this.currentPage);

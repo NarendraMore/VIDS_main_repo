@@ -2,35 +2,16 @@
   <div>
     <b style="font-size: 22px">Person Cross Detection</b>
     <div style="float: right; display: flex">
-      <p-calendar
-      placeholder="Select Date"
-      [showIcon]="true"
-      (onClear)="loadLatestEvents()"
-      [showClear]="true"
-      inputId="icon"
-      styleClass="searchCalender"
-      [(ngModel)]="dateForSearch"
-      (onSelect)="searchByDate(dateForSearch)"
-    ></p-calendar>
+      <p-calendar placeholder="Select Date" [showIcon]="true" (onClear)="loadLatestEvents()" [showClear]="true"
+        inputId="icon" styleClass="searchCalender" [(ngModel)]="dateForSearch"
+        (onSelect)="searchByDate(dateForSearch)"></p-calendar>
       <span>
-        <button
-          (click)="onclickDownloadReport()"
-          class="personCrossDownload p-button-lg"
-          pButton
-          pRipple
-          icon="pi pi-download"
-          pTooltip="Download"
-        ></button> </span
-      >&nbsp;
+        <button (click)="onclickDownloadReport()" class="personCrossDownload p-button-lg" pButton pRipple
+          icon="pi pi-download" pTooltip="Download"></button> </span>&nbsp;
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input
-          class="p-inputtext-sm searchInputPersonCross"
-          pInputText
-          type="text"
-          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-          placeholder="Search"
-        />
+        <input class="p-inputtext-sm searchInputPersonCross" pInputText type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" />
       </span>
     </div>
   </div>
@@ -39,21 +20,15 @@
     <p-calendar [(ngModel)]="endDate" dateFormat="yy-mm-dd"></p-calendar>
     <button (click)="applyFilter()">Apply Filter</button> -->
   <div class="WrongsideTable">
-    <p-table
-      [globalFilterFields]="[
+    <p-table [globalFilterFields]="[
         'vehiclecount',
         'vehicletype',
         'date',
         'time',
         'cameratype',
         'location'
-      ]"
-      #dt
-      [value]="personCrossArray"
-      [rows]="itemsPerPage"
-      [paginator]="false"
-      styleClass="p-datatable-sm personCrossTable customPaginator"
-    >
+      ]" #dt [value]="personCrossArray" [rows]="itemsPerPage" [paginator]="false"
+      styleClass="p-datatable-sm personCrossTable customPaginator">
       <ng-template pTemplate="header" let-columns>
         <tr class="tableHeader">
           <th>Sr.No</th>
@@ -69,90 +44,49 @@
           <th style="width: 15%">Action</th>
         </tr>
       </ng-template>
-      <ng-template
-        pTemplate="body"
-        let-rowData
-        let-columns="columns"
-        let-rowIndex="rowIndex"
-      >
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
         <tr>
           <td>{{ rowIndex + 1 }}</td>
           <!-- <td>{{ rowData.vehicletype }}</td> -->
-          <td>{{ rowData.date| date : "dd-MMM yyyy"  }}</td>
-         <td>{{ rowData.time}}</td>
+          <td>{{ rowData.date| date : "dd-MMM yyyy" }}</td>
+          <td>{{ rowData.time}}</td>
           <td>{{ rowData.cameratype }}</td>
           <td>{{ rowData.location }}</td>
           <td>
-            <button
-              pTooltip="Video"
-              style="height: 35px; width: 35px; background-color: #6366f1"
-              (click)="onClickShowvideo(rowData._id)"
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-caret-right"
-              class="p-button-rounded"
-            ></button>
+            <button pTooltip="Video" style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickShowvideo(rowData._id)" pButton pRipple type="button" icon="pi pi-caret-right"
+              class="p-button-rounded"></button>
             &nbsp;
-            <button
-              pTooltip="Image"
-              tooltipPosition="left"
-              style="height: 35px; width: 35px; background-color: #6366f1"
-              (click)="onClickShowphoto(rowData._id, rowData.name)"
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-image"
-              class="p-button-rounded"
-            ></button>
+            <button pTooltip="Image" tooltipPosition="left" style="height: 35px; width: 35px; background-color: #6366f1"
+              (click)="onClickShowphoto(rowData._id, rowData.name)" pButton pRipple type="button" icon="pi pi-image"
+              class="p-button-rounded"></button>
           </td>
         </tr>
       </ng-template>
     </p-table>
-    <p-paginator
-    (onPageChange)="onPageChange($event)"
-    [first]="(currentPage - 1) * itemsPerPage"
-    [rows]="itemsPerPage"
-    [totalRecords]="totalItems"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{
-      (currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems) }} of {{ totalItems }} entries"
-    class="customPaginator"
-  ></p-paginator>
-  
+    <p-paginator (onPageChange)="onPageChange($event)" [first]="(currentPage - 1) * itemsPerPage" [rows]="itemsPerPage"
+      [totalRecords]="totalItems" [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{
+      (currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems) }} of {{ totalItems }} entries" class="customPaginator"></p-paginator>
+
   </div>
 </div>
 
-<p-dialog
-  [modal]="true"
-  header="Person Cross Detection Video"
-  [(visible)]="personCrossVideo"
-  (onHide)="onClickCanclevideo()"
-  [style]="{ width: '80vh', height: 'auto' }"
->
+<p-dialog [modal]="true" header="Person Cross Detection Video" [(visible)]="personCrossVideo"
+  (onHide)="onClickCanclevideo()" [style]="{ width: '80vh', height: 'auto' }">
   <div class="" style="display: flex">
-    <video   #videoPlayer width="470" height="300" controls autoplay>
+    <video #videoPlayer width="470" height="300" controls autoplay>
       <source [src]="personCrossUrl" type="video/mp4" autoplay />
     </video>
-  
+
   </div>
 </p-dialog>
-<p-dialog
-  [modal]="true"
-  header="Person Cross Detection Photo"
-  [(visible)]="personCrossPhoto"
-  (onHide)="onClickCanclePhoto()"
-  [style]="{ width: '90%', height: 'auto' }"
->
+<p-dialog [modal]="true" header="Person Cross Detection Photo" [(visible)]="personCrossPhoto"
+  (onHide)="onClickCanclePhoto()" [style]="{ width: '90%', height: 'auto' }">
   <div class="">
     <div style="">
       <i (click)="zoomInImage()" style="cursor: pointer">
-        <img
-          class=""
-          style="width: 90%; height: auto"
-          [src]="personcrossImageUrl"
-          alt=""
-        />
+        <img class="" style="width: 90%; height: auto" [src]="personcrossImageUrl" alt="" />
       </i>
     </div>
   </div>
@@ -167,15 +101,8 @@
 
   </div>
 </p-dialog> -->
-<p-dialog
-  [modal]="true"
-  header="Download Person Cross Report"
-  [closable]="true"
-  [(visible)]="downloadReport"
-  [style]="{ width: '70%', height: '55vh' }"
-  styleClass="personStatus"
-  (onHide)="onClickCancel()"
->
+<p-dialog [modal]="true" header="Download Person Cross Report" [closable]="true" [(visible)]="downloadReport"
+  [style]="{ width: '70%', height: '55vh' }" styleClass="personStatus" (onHide)="onClickCancel()">
   <form action="" [formGroup]="downloadForm">
     <div class="grid">
       <!-- <div class="col-4">
@@ -190,48 +117,23 @@
       <div class="col-4">
         <div class="grid-content">
           <label for="">Start Date <span style="color: red">*</span></label>
-          <input
-            type="date"
-            class="inputDateStyle"
-            formControlName="startDate"
-            appendTo="body"
-            dateFormat="yy-mm-dd"
-            required
-            inputId="dateformat"
-            (change)="onDateChange1($event)"
-          />
+          <input type="date" class="inputDateStyle" formControlName="startDate" appendTo="body" dateFormat="yy-mm-dd"
+            required inputId="dateformat" (change)="onDateChange1($event)" />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">End Date <span style="color: red">*</span></label>
-          <input
-            type="date"
-            class="inputDateStyle"
-            formControlName="endDate"
-            appendTo="body"
-            dateFormat="yy-mm-dd"
-            required
-            [max]="today"
-            inputId="dateformat1"
-            (change)="onDateChange($event)"
-          />
+          <input type="date" class="inputDateStyle" formControlName="endDate" appendTo="body" dateFormat="yy-mm-dd"
+            required [max]="today" inputId="dateformat1" (change)="onDateChange($event)" />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">Choose Camera <span style="color: red">*</span> </label>
-          <p-dropdown
-            class="inputDropdownStyle"
-            formControlName="cameratype"
-            (onChange)="onclickcameraEvent($event)"
-            optionLabel="cameraTypes"
-            [options]="cameraType"
-            optionValue="cameraTypes"
-            appendTo="body"
-            styleClass="dropdown1"
-            placeholder="Select"
-          ></p-dropdown>
+          <p-dropdown class="inputDropdownStyle" formControlName="cameratype" (onChange)="onclickcameraEvent($event)"
+            optionLabel="cameraTypes" [options]="cameraType" optionValue="cameraTypes" appendTo="body"
+            styleClass="dropdown1" placeholder="Select"></p-dropdown>
         </div>
       </div>
     </div>
@@ -239,72 +141,33 @@
       <div class="col-4">
         <div class="grid-content">
           <label for="">Start Time <span style="color: red">*</span></label>
-          <input
-            class="inputStyle"
-            formControlName="startTime"
-            ngClass="formInput"
-            type="time"
-            pInputText
-            placeholder="Enter"
-            required
-          />
+          <input class="inputStyle" formControlName="startTime" ngClass="formInput" type="time" pInputText
+            placeholder="Enter" required />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">End Time <span style="color: red">*</span></label>
-          <input
-            class="inputStyle"
-            formControlName="endTime"
-            ngClass="formInput"
-            type="time"
-            pInputText
-            placeholder="Enter"
-            required
-          />
+          <input class="inputStyle" formControlName="endTime" ngClass="formInput" type="time" pInputText
+            placeholder="Enter" required />
         </div>
       </div>
       <div class="col-4">
         <div class="grid-content">
           <label for="">Choose Format <span style="color: red">*</span></label>
-          <p-dropdown
-            (onChange)="onDropdownChange($event)"
-            class="inputDropdownStyle"
-            formControlName="formate"
-            optionLabel="formates"
-            [options]="formate"
-            optionValue="formates"
-            appendTo="body"
-            styleClass="dropdown"
-            placeholder="Select"
-          ></p-dropdown>
+          <p-dropdown (onChange)="onDropdownChange($event)" class="inputDropdownStyle" formControlName="formate"
+            optionLabel="formates" [options]="formate" optionValue="formates" appendTo="body" styleClass="dropdown"
+            placeholder="Select"></p-dropdown>
         </div>
       </div>
     </div>
     <div class="grid"></div>
 
     <div style="float: right; margin-top: 3%;">
-      <button
-        (click)="onClickCancel()"
-        pButton
-        label="Cancel"
-        type="button"
-        pRipple
-        icon="pi pi-times-circle"
-        class="cancelBtn p-button-outlined"
-      ></button
-      >&nbsp;
-      <button
-        (click)="onClickDownloadReport()"
-        [disabled]="!downloadForm.valid"
-       
-        pButton
-        label="download"
-        type="button"
-        pRipple
-        class="reportBtn p-button-outlined"
-        icon="pi pi-download"
-      ></button>
+      <button (click)="onClickCancel()" pButton label="Cancel" type="button" pRipple icon="pi pi-times-circle"
+        class="cancelBtn p-button-outlined"></button>&nbsp;
+      <button (click)="onClickDownloadReport()" [disabled]="!downloadForm.valid" pButton label="download" type="button"
+        pRipple class="reportBtn p-button-outlined" icon="pi pi-download"></button>
     </div>
   </form>
 </p-dialog>
